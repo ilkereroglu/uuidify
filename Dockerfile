@@ -1,26 +1,26 @@
-# Stage 1: Build
-FROM golang:1.22 AS build
+# 🏗️ Stage 1 — Builder
+FROM golang:1.24-alpine AS builder
 
-LABEL maintainer="İlker Eroğlu <ilkereroglu@gmail.com>" \
-      org.opencontainers.image.source="https://github.com/ilkereroglu/uuidify" \
-      org.opencontainers.image.description="A simple public UUID generator API built in Go"
-
+# Go mod cache layer (faster rebuilds)
 WORKDIR /app
-
 COPY go.mod go.sum ./
-RUN go mod download
+RUN go mod download && go mod verify
 
+# Copy rest of the source
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o uuidify ./cmd/server
 
-# Stage 2: Runtime
-FROM gcr.io/distroless/base-debian12
+# Build binary statically
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /uuidify ./cmd/server
 
-COPY --from=build /app/uuidify /uuidify
+# 🧊 Stage 2 — Runtime (Distroless base)
+FROM gcr.io/distroless/static-debian12:nonroot
+
+# Copy built binary
+COPY --from=builder /uuidify /uuidify
+
+# Network config
 EXPOSE 8080
 
+# Run as nonroot (secure by default)
 USER nonroot:nonroot
 ENTRYPOINT ["/uuidify"]
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
-  CMD wget -q --spider http://localhost:8080/health || exit 1
