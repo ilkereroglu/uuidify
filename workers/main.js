@@ -1,20 +1,32 @@
-/**
- * Cloudflare Worker - UUIDify Edge Proxy
- * Bu worker, Cloudflare edge üzerinden gelen istekleri Go backend'ine yönlendirir.
- */
-
-export default {
+function generateUUIDv4() {
+    // RFC4122 uyumlu UUIDv4 üretimi
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 15) >> 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+  
+  export default {
     async fetch(request, env, ctx) {
       try {
         const url = new URL(request.url);
-        const target = `${env.GO_API_URL}${url.pathname}${url.search}`;
-        const res = await fetch(target, {
-          method: request.method,
-          headers: request.headers,
-        });
+        const count = Math.min(Number(url.searchParams.get("count")) || 1, 1000);
+        const format = (url.searchParams.get("format") || "json").toLowerCase();
   
-        // Response'u pass-through döndürüyoruz
-        return new Response(res.body, res);
+        // UUID listesi oluştur
+        const uuids = Array.from({ length: count }, () => generateUUIDv4());
+  
+        // Format tipi seç
+        if (format === "text") {
+          return new Response(uuids.join("\n"), {
+            headers: { "Content-Type": "text/plain; charset=utf-8" },
+          });
+        }
+  
+        return new Response(JSON.stringify({ uuids }), {
+          headers: { "Content-Type": "application/json" },
+        });
       } catch (err) {
         return new Response(JSON.stringify({ error: err.message }), {
           status: 500,
