@@ -1,0 +1,13 @@
+name = "uuidify"
+main = "workers/main.js"
+compatibility_date = "2025-11-02"
+workers_dev = true
+
+# Cloudflare zone bağlama (array şeklinde!)
+routes = [
+  { pattern = "api.uuidify.io/*", zone_id = "bcc70a77fb91d4762181cf098d7257d6" }
+]
+
+[vars]
+# Şimdilik local test ediyorsan:
+GO_API_URL = "https://api.uuidify.io"
