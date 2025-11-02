@@ -1,4 +1,18 @@
+# Go
 bin/
-dist/
 *.log
+*.out
+*.exe
+*.test
+
+# Dependencies
+vendor/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
 .DS_Store
+
+# Env
+.env
