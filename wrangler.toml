@@ -1,13 +1,19 @@
+# UUIDify Cloudflare Worker Configuration
 name = "uuidify"
 main = "workers/main.js"
 compatibility_date = "2025-11-02"
 workers_dev = true
 
-# Cloudflare zone bağlama (array şeklinde!)
+# Route bindings for production
 routes = [
   { pattern = "api.uuidify.io/*", zone_id = "bcc70a77fb91d4762181cf098d7257d6" }
 ]
 
 [vars]
-# Şimdilik local test ediyorsan:
+# Base API endpoint used by the Worker
 GO_API_URL = "https://api.uuidify.io"
+
+# Cloudflare Analytics Engine binding
+[[analytics_engine_datasets]]
+binding = "UUIDIFY_ANALYTICS"
+dataset = "uuidify_logs"
