@@ -1,0 +1,6 @@
+name = "dashboard"
+main = "dist/_worker.js"
+compatibility_date = "2025-11-02"
+
+[vars]
+GO_API_URL = "https://api.uuidify.io"
