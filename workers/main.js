@@ -1,7 +1,7 @@
+// RFC 4122 compliant UUIDv4 generator
 function generateUUIDv4() {
-    // RFC4122 uyumlu UUIDv4 üretimi
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-      const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 15) >> 0;
+      const r = crypto.getRandomValues(new Uint8Array(1))[0] & 15;
       const v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
@@ -14,10 +14,10 @@ function generateUUIDv4() {
         const count = Math.min(Number(url.searchParams.get("count")) || 1, 1000);
         const format = (url.searchParams.get("format") || "json").toLowerCase();
   
-        // UUID listesi oluştur
+        // Generate the requested number of UUIDs
         const uuids = Array.from({ length: count }, () => generateUUIDv4());
   
-        // Format tipi seç
+        // Choose response format
         if (format === "text") {
           return new Response(uuids.join("\n"), {
             headers: { "Content-Type": "text/plain; charset=utf-8" },
