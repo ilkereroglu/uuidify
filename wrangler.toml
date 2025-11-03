@@ -6,7 +6,7 @@ workers_dev = true
 
 # Route bindings for production
 routes = [
-  { pattern = "api.uuidify.io/*", zone_id = "bcc70a77fb91d4762181cf098d7257d6" }
+  { pattern = "api.uuidify.io/*", zone_id = "${CF_ZONE_ID}" }
 ]
 
 [vars]
