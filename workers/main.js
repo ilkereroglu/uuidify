@@ -46,7 +46,10 @@ function generateUUIDv4() {
   }
   
   export default {
-    async fetch(request) {
+    async fetch(request, env) {
+      const start = Date.now();
+      let response;
+  
       try {
         const url = new URL(request.url);
         const version = (url.searchParams.get("version") || "v4").toLowerCase();
@@ -56,20 +59,38 @@ function generateUUIDv4() {
         const uuids = Array.from({ length: count }, () => generateUUID(version));
   
         if (format === "text") {
-          return new Response(uuids.join("\n"), {
+          response = new Response(uuids.join("\n"), {
             headers: { "Content-Type": "text/plain; charset=utf-8" },
           });
+        } else {
+          response = new Response(JSON.stringify({ uuids }), {
+            headers: { "Content-Type": "application/json" },
+          });
         }
-  
-        return new Response(JSON.stringify({ uuids }), {
-          headers: { "Content-Type": "application/json" },
-        });
       } catch (err) {
-        return new Response(JSON.stringify({ error: err.message }), {
+        response = new Response(JSON.stringify({ error: err.message }), {
           status: 500,
           headers: { "Content-Type": "application/json" },
         });
       }
+  
+      // 🔹 Analytics Engine Logging
+      try {
+        const latency = Date.now() - start;
+        const ip = request.headers.get("cf-connecting-ip") || "unknown";
+        const status = response.status.toString();
+        const path = new URL(request.url).pathname;
+  
+        env.UUIDIFY_ANALYTICS.writeDataPoint({
+          blobs: [path, ip, status],
+          doubles: [latency],
+          indexes: [Date.now()],
+        });
+      } catch (logErr) {
+        console.error("Analytics logging failed:", logErr);
+      }
+  
+      return response;
     },
   };
   
