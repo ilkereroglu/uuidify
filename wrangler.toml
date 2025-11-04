@@ -17,3 +17,7 @@ GO_API_URL = "https://api.uuidify.io"
 [[analytics_engine_datasets]]
 binding = "UUIDIFY_ANALYTICS"
 dataset = "uuidify_logs"
+
+[[r2_buckets]]
+binding = "LOG_BUCKET"
+bucket_name = "uuidify-logs"
