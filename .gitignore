@@ -31,3 +31,7 @@ pnpm-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+pnpm-lock.yaml
+
+# Cloudflare build output
+!dist/
