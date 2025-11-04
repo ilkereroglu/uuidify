@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
   "dev": "next dev",
-  "build": "npx @cloudflare/next-on-pages@latest",
-  "start": "next start"
+  "build": "next build && npx @cloudflare/next-on-pages",
+  "start": "next start",
+  "lint": "eslint"
 },
   "dependencies": {
     "next": "16.0.1",
