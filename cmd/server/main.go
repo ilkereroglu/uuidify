@@ -16,6 +16,8 @@ import (
 	"github.com/google/uuid"
 )
 
+const maxUUIDCount = 1000
+
 func main() {
 	mux := http.NewServeMux()
 
@@ -57,9 +59,15 @@ func uuidHandler(w http.ResponseWriter, r *http.Request) {
 	if version == "" {
 		version = "v4"
 	}
-	count, _ := strconv.Atoi(q.Get("count"))
+	count, err := strconv.Atoi(q.Get("count"))
+	if err != nil {
+		count = 0
+	}
 	if count <= 0 {
 		count = 1
+	}
+	if count > maxUUIDCount {
+		count = maxUUIDCount
 	}
 	format := q.Get("format")
 
