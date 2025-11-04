@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -78,7 +79,7 @@ func uuidHandler(w http.ResponseWriter, r *http.Request) {
 
 	if format == "text" {
 		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprint(w, uuids[0])
+		fmt.Fprint(w, strings.Join(uuids, "\n"))
 		return
 	}
 
