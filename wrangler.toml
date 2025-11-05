@@ -20,4 +20,4 @@ dataset = "uuidify_logs"
 
 [[r2_buckets]]
 binding = "LOG_BUCKET"
-bucket_name = "uuidify-logs"
+bucket_name = "uuidify-logs-wnam"
