@@ -2,7 +2,7 @@
 name = "uuidify"
 main = "workers/main.js"
 compatibility_date = "2025-11-02"
-workers_dev = true
+workers_dev = false
 
 # Route bindings for production
 routes = [
