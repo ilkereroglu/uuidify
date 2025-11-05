@@ -1,6 +1,6 @@
 # UUIDify Cloudflare Worker Configuration
 name = "uuidify"
-main = "workers/main.js"
+main = "workers/index.js"
 compatibility_date = "2025-11-02"
 workers_dev = false
 
