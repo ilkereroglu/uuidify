@@ -44,6 +44,26 @@ export default {
         return new Response("Log saved", { status: 200 });
       }
   
+      // List all objects in the R2 bucket
+      if (url.pathname === "/list") {
+        try {
+          const objects = await env.LOG_BUCKET.list();
+          const result = objects.objects.map(obj => ({
+            key: obj.key,
+            size: obj.size,
+            uploaded: obj.uploaded,
+          }));
+
+          return new Response(JSON.stringify(result, null, 2), {
+            headers: { "Content-Type": "application/json" },
+          });
+        } catch (err) {
+          console.error("R2 list failed:", err);
+          return new Response("Failed to list objects", { status: 500 });
+        }
+      }
+
+
       // 404 fallback for undefined routes
       return new Response("Not found", { status: 404 });
     },
