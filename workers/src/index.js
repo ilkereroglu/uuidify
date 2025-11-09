@@ -4,7 +4,7 @@
  * Modular worker implementation with:
  * - UUID v1, v4, v7 generation
  * - R2 storage for UUID logging
- * - Multiple endpoints: /, /uuid, /list, /log, /generate
+ * - Multiple endpoints: /, /health, /uuid, /list, /log
  * - Analytics Engine metrics
  * 
  * Author: İlker Eroğlu
@@ -20,12 +20,11 @@ import { withErrorHandler } from './middleware/error-handler.js';
 
 // Route mapping
 const routes = {
-  "/": handleGenerate,      // Main API endpoint (matches Go backend)
-  "/health": handleHealth,  // Health check
+  "/": handleGenerate,      // Main UUID generation endpoint (default v4)
+  "/health": handleHealth,  // Health check endpoint
   "/uuid": handleUUID,      // UUID with R2 logging
   "/log": handleLog,        // Manual log write
   "/list": handleList,      // List UUIDs from R2
-  "/generate": handleGenerate, // Alias for root
 };
 
 /**

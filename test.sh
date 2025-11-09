@@ -89,13 +89,14 @@ echo "----------------------------------------------------"
 
 WORKER_URL="http://localhost:8787"
 
-if curl -s -f "$WORKER_URL/" > /dev/null 2>&1; then
+if curl -s -f "$WORKER_URL/health" > /dev/null 2>&1; then
     echo -e "${GREEN}✓ Worker is running${NC}"
     echo ""
     
-    test_endpoint "$WORKER_URL/" "200" "Worker health"
-    test_endpoint "$WORKER_URL/uuid" "200" "Worker UUID"
-    test_endpoint "$WORKER_URL/generate?count=2" "200" "Worker generate"
+    test_endpoint "$WORKER_URL/" "200" "Worker UUID generate (root)"
+    test_endpoint "$WORKER_URL/?count=2" "200" "Worker generate multiple"
+    test_endpoint "$WORKER_URL/health" "200" "Worker health check"
+    test_endpoint "$WORKER_URL/uuid" "200" "Worker UUID with R2"
 else
     echo -e "${YELLOW}⚠ Worker is not running${NC}"
     echo "Start worker with: make worker-dev"

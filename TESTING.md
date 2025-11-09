@@ -36,20 +36,27 @@ The server will run on `http://localhost:8080`.
 
 #### Manual Testing:
 ```bash
-# Single UUID (JSON)
+# Single UUID (JSON) - Go backend uses root endpoint
 curl http://localhost:8080/
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
 
 # Single UUID (v1)
 curl "http://localhost:8080/?version=v1"
+# → {"uuid":"6ba7b810-9dad-11d1-80b4-00c04fd430c8"}
 
 # Multiple UUIDs (v7)
 curl "http://localhost:8080/?version=v7&count=5"
+# → {"uuids":["01234567-89ab-7def-0123-456789abcdef", ...]}
 
 # Text format
 curl "http://localhost:8080/?format=text&count=3"
+# → 550e8400-e29b-41d4-a716-446655440000
+# → 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+# → 01234567-89ab-7def-0123-456789abcdef
 
 # Health check
 curl http://localhost:8080/health
+# → ok
 ```
 
 ### 2. Docker Testing
@@ -117,17 +124,25 @@ cd workers && wrangler dev
 While the worker is running locally, you can test it:
 
 ```bash
-# Health check
+# UUID generate (root endpoint)
 curl http://localhost:8787/
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
 
-# UUID generate
+# Generate with parameters
+curl "http://localhost:8787/?version=v4&count=3"
+# → {"uuids":["550e8400-e29b-41d4-a716-446655440000", ...]}
+
+# Health check
+curl http://localhost:8787/health
+# → UUIDify Worker running ✅
+
+# UUID with R2 logging
 curl http://localhost:8787/uuid
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
 
-# Generate endpoint
-curl "http://localhost:8787/generate?version=v4&count=3"
-
-# List UUIDs
+# List UUIDs from R2
 curl http://localhost:8787/list
+# → {"uuids":["...", ...]}
 ```
 
 ---
@@ -200,16 +215,35 @@ cd workers && wrangler deploy --env preview
 #### Test Endpoints
 
 ```bash
-# Test production URL
-curl https://api.uuidify.io/
+# Generate UUID (root endpoint)
+curl https://api.uuidify.io
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
+
+# Generate with parameters
+curl "https://api.uuidify.io?version=v7&count=5"
+# → {"uuids":["01234567-89ab-7def-0123-456789abcdef", ...]}
+
+# Generate UUID v1
+curl "https://api.uuidify.io?version=v1"
+# → {"uuid":"6ba7b810-9dad-11d1-80b4-00c04fd430c8"}
+
+# Generate in text format
+curl "https://api.uuidify.io?format=text&count=3"
+# → 550e8400-e29b-41d4-a716-446655440000
+# → 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+# → 01234567-89ab-7def-0123-456789abcdef
+
+# Health check endpoint
+curl https://api.uuidify.io/health
+# → UUIDify Worker running ✅
+
+# UUID with R2 logging
+curl "https://api.uuidify.io/uuid?version=v1"
+# → {"uuid":"6ba7b810-9dad-11d1-80b4-00c04fd430c8"}
 
 # Or worker.dev URL
-curl https://uuidify.uuidify.workers.dev/
-
-# Different endpoints
-curl "https://api.uuidify.io/generate?version=v7&count=5"
-curl "https://api.uuidify.io/uuid?version=v1"
-curl https://api.uuidify.io/health
+curl https://uuidify.uuidify.workers.dev
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
 ```
 
 #### Log Check

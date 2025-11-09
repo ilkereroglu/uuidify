@@ -33,9 +33,23 @@ curl https://api.uuidify.io
 ## 🧠 Examples
 
 ```bash
+# Generate a single UUID (v4, default)
+curl https://api.uuidify.io
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
+
+# Generate a UUID v1
 curl "https://api.uuidify.io?version=v1"
+# → {"uuid":"6ba7b810-9dad-11d1-80b4-00c04fd430c8"}
+
+# Generate multiple UUIDs (v7)
 curl "https://api.uuidify.io?version=v7&count=5"
-curl "https://api.uuidify.io?format=text"
+# → {"uuids":["01234567-89ab-7def-0123-456789abcdef", ...]}
+
+# Generate UUIDs in text format
+curl "https://api.uuidify.io?format=text&count=3"
+# → 550e8400-e29b-41d4-a716-446655440000
+# → 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+# → 01234567-89ab-7def-0123-456789abcdef
 ```
 
 ---
@@ -46,6 +60,14 @@ curl "https://api.uuidify.io?format=text"
 # Run Go backend
 make dev
 # Visit → http://localhost:8080
+
+# Test UUID generation
+curl http://localhost:8080/
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
+
+# Test worker locally
+make worker-dev
+# Visit → http://localhost:8787
 
 # Run tests
 make test

@@ -13,8 +13,11 @@ make dev
 
 # 3. Test in another terminal
 curl http://localhost:8080/
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
 curl "http://localhost:8080/?version=v7&count=3"
+# → {"uuids":["01234567-89ab-7def-0123-456789abcdef", ...]}
 curl http://localhost:8080/health
+# → ok
 ```
 
 ### 2. Cloudflare Worker Testing (Local)
@@ -30,8 +33,11 @@ cd workers && wrangler dev
 
 # 3. Test in another terminal
 curl http://localhost:8787/
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
 curl "http://localhost:8787/?version=v7&count=3"
+# → {"uuids":["01234567-89ab-7def-0123-456789abcdef", ...]}
 curl http://localhost:8787/health
+# → UUIDify Worker running ✅
 ```
 
 ---
@@ -59,7 +65,11 @@ make worker-dev
 
 # Test endpoints
 curl http://localhost:8787/
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
 curl "http://localhost:8787/?version=v1&count=5"
+# → {"uuids":["6ba7b810-9dad-11d1-80b4-00c04fd430c8", ...]}
+curl http://localhost:8787/health
+# → UUIDify Worker running ✅
 ```
 
 ### Step 3: Deploy
@@ -76,11 +86,14 @@ cd workers && wrangler deploy
 
 ```bash
 # Test production URL
-curl https://api.uuidify.io/
-curl "https://api.uuidify.io/?version=v7&count=3"
+curl https://api.uuidify.io
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
+curl "https://api.uuidify.io?version=v7&count=3"
+# → {"uuids":["01234567-89ab-7def-0123-456789abcdef", ...]}
 
 # Worker.dev URL
-curl https://uuidify.uuidify.workers.dev/
+curl https://uuidify.uuidify.workers.dev
+# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
 ```
 
 ---
