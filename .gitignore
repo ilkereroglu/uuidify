@@ -35,3 +35,6 @@ pnpm-lock.yaml
 
 # Cloudflare build output
 !dist/
+
+# Coverage reports
+coverage.html

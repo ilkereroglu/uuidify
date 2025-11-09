@@ -23,7 +23,7 @@ curl https://api.uuidify.io
 ## 🔧 Parameters
 
 | Param   | Type   | Default | Description |
-|----------|--------|----------|--------------|
+|---------|--------|---------|-------------|
 | `version` | string | `v4` | UUID version (`v1`, `v4`, or `v7`) |
 | `count`   | int    | `1` | Number of UUIDs to generate (1–1000) |
 | `format`  | string | `json` | Response format: `json` or `text` |
@@ -43,9 +43,21 @@ curl "https://api.uuidify.io?format=text"
 ## 🧩 Local Development
 
 ```bash
+# Run Go backend
 make dev
 # Visit → http://localhost:8080
+
+# Run tests
+make test
+
+# Coverage report
+make test-coverage
+
+# Run test script
+./test.sh
 ```
+
+For detailed testing and deployment guide, see [TESTING.md](./TESTING.md).
 
 ---
 
@@ -61,7 +73,7 @@ docker run -p 8080:8080 uuidify:latest
 ## ⚙️ Makefile Commands
 
 | Command | Description |
-|----------|-------------|
+|---------|-------------|
 | `make dev` | Run locally with Go |
 | `make build` | Build the binary |
 | `make docker` | Build Docker image |
@@ -72,12 +84,26 @@ docker run -p 8080:8080 uuidify:latest
 
 ## 🚀 Deployment
 
+### Cloudflare Workers Deploy
+
+```bash
+# Wrangler login (first time)
+wrangler login
+
+# Test worker locally
+make worker-dev
+
+# Deploy to production
+make worker-deploy
+```
+
 Deployed via **Cloudflare Workers** with automatic builds from **GitHub → main** branch.
 
 - **Worker:** [uuidify](https://uuidify.uuidify.workers.dev/)
 - **Custom Domain:** [api.uuidify.io](https://api.uuidify.io/)
 - **Zone:** `uuidify.io`
-- **Environment Variable:** `GO_API_URL=https://api.uuidify.io`
+
+**For detailed deployment guide, see [TESTING.md](./TESTING.md).**
 
 ---
 
