@@ -1,6 +1,6 @@
 # 🌀 uuidify
 
-A blazing-fast public **UUID Generator API** built with **Go** — deployed globally via **Cloudflare Workers**.
+A blazing-fast public **UUID/ULID Generator API** built with **Go** — deployed globally via **Cloudflare Workers**.
 
 Generate unique identifiers instantly — anywhere, anytime. ⚡
 
@@ -22,11 +22,12 @@ curl https://api.uuidify.io
 
 ## 🔧 Parameters
 
-| Param   | Type   | Default | Description |
-|---------|--------|---------|-------------|
-| `version` | string | `v4` | UUID version (`v1`, `v4`, or `v7`) |
-| `count`   | int    | `1` | Number of UUIDs to generate (1–1000) |
-| `format`  | string | `json` | Response format: `json` or `text` |
+| Param       | Type   | Default | Description |
+|-------------|--------|---------|-------------|
+| `algorithm` | string | `uuid`  | Generator algorithm (`uuid` or `ulid`) |
+| `version`   | string | `v4`    | UUID version (`v1`, `v4`, or `v7`) |
+| `count`     | int    | `1`     | Number of UUIDs to generate (1–1000) |
+| `format`    | string | `json`  | Response format: `json` or `text` |
 
 ---
 
@@ -64,6 +65,10 @@ make dev
 # Test UUID generation
 curl http://localhost:8080/
 # → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
+
+# Test ULID generation
+curl "http://localhost:8080/?count=2&algorithm=ulid"
+# → {"uuids":["01K9N48W4SVAN58GRTTVX2FF5J","01K9N48W4SVAN58GRTTX2CZ8N4"]}
 
 # Test worker locally
 make worker-dev

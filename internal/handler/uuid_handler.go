@@ -29,7 +29,11 @@ func (h *UUIDHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := validator.ParseUUIDParams(r)
-	uuids, err := h.service.Generate(params.Version, params.Count)
+	uuids, err := h.service.Generate(service.GenerateRequest{
+		Algorithm: params.Algorithm,
+		Version:   params.Version,
+		Count:     params.Count,
+	})
 	if err != nil {
 		errorResponse := models.ErrorResponse{Error: err.Error()}
 		w.Header().Set("Content-Type", "application/json")
