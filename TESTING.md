@@ -160,7 +160,7 @@ name = "uuidify"
 main = "workers/main.js"
 compatibility_date = "2025-11-02"
 workers_dev = false
-node_compat = true
+compatibility_flags = ["nodejs_compat"]
 
 # Route bindings (for production)
 routes = [
