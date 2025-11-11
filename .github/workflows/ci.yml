@@ -10,8 +10,11 @@ on:
 
 jobs:
   build-test:
-    name: 🧪 Build & Test
+    name: 🧪 Build, Test & Worker Check
     runs-on: ubuntu-latest
+    env:
+      BUILD_VERSION: ${{ github.ref_name }}
+      GIT_COMMIT: ${{ github.sha }}
 
     steps:
       - name: Checkout code
@@ -30,6 +33,12 @@ jobs:
 
       - name: Run tests
         run: go test ./... -v
+
+      - name: Install Wrangler CLI
+        run: npm install -g wrangler@4.47.0
+
+      - name: Worker dry-run deploy check
+        run: wrangler deploy --dry-run
 
   docker-build-push:
     name: 🐳 Build & Push Docker image
@@ -60,3 +69,14 @@ jobs:
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
+
+  post-deploy-health-check:
+    name: ✅ Post-Deploy Health Checks
+    needs: docker-build-push
+    runs-on: ubuntu-latest
+    if: ${{ always() && needs.docker-build-push.result == 'success' }}
+    steps:
+      - name: Verify /health endpoints
+        run: |
+          curl -fsS https://api.uuidify.io/health
+          curl -fsS "https://api.uuidify.io/health?format=json"

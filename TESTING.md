@@ -167,6 +167,11 @@ routes = [
   { pattern = "api.uuidify.io/*", zone_name = "uuidify.io" }
 ]
 
+[vars]
+GO_API_URL = "https://api.uuidify.io"
+BUILD_VERSION = "dev"
+GIT_COMMIT = "local"
+
 # Analytics Engine
 [[analytics_engine_datasets]]
 binding = "UUIDIFY_ANALYTICS"

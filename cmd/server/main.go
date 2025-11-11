@@ -20,11 +20,13 @@ func main() {
 
 	uuidService := service.NewUUIDService(cfg.MaxUUIDCount)
 	uuidHandler := handler.NewUUIDHandler(uuidService)
-	healthHandler := handler.NewHealthHandler()
+	healthHandler := handler.NewHealthHandler(cfg.BuildVersion, cfg.GitCommit)
+	metricsHandler := handler.NewMetricsHandler()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", uuidHandler.Handle)
 	mux.HandleFunc("/health", healthHandler.Handle)
+	mux.HandleFunc("/metrics", metricsHandler.Handle)
 
 	handlerChain := middleware.CORS(
 		middleware.Logging(

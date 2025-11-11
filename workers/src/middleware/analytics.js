@@ -12,26 +12,47 @@
 export function withAnalytics(handler, env) {
   return async (request, envContext, ctx) => {
     const start = Date.now();
+    let response;
+
     try {
-      const response = await handler(request, envContext, ctx);
+      response = await handler(request, envContext, ctx);
       return response;
     } finally {
-      try {
-        const latency = Date.now() - start;
-        const ip = request.headers.get("cf-connecting-ip") || "unknown";
-        const pathName = new URL(request.url).pathname;
+      const latency = Date.now() - start;
+      const url = new URL(request.url);
+      const status = response?.status ?? 500;
+      const colo = request.cf?.colo || "unknown";
 
-        if (env.UUIDIFY_ANALYTICS) {
-          env.UUIDIFY_ANALYTICS.writeDataPoint({
-            blobs: [pathName, ip],
-            doubles: [latency],
-            indexes: [Date.now()],
-          });
+      const logEntry = {
+        timestamp: new Date().toISOString(),
+        method: request.method,
+        path: url.pathname,
+        status,
+        duration_ms: latency,
+        colo,
+      };
+
+      const dataset = envContext?.UUIDIFY_ANALYTICS || env?.UUIDIFY_ANALYTICS;
+      const logTask = async () => {
+        try {
+          console.info("[analytics]", JSON.stringify(logEntry));
+          if (dataset) {
+            await dataset.writeDataPoint({
+              blobs: [logEntry.method, logEntry.path, logEntry.colo],
+              doubles: [logEntry.status, logEntry.duration_ms],
+              indexes: [Date.now()],
+            });
+          }
+        } catch (logErr) {
+          console.error("Analytics logging failed:", logErr);
         }
-      } catch (logErr) {
-        console.error("Analytics logging failed:", logErr);
+      };
+
+      if (ctx?.waitUntil) {
+        ctx.waitUntil(logTask());
+      } else {
+        logTask();
       }
     }
   };
 }
-

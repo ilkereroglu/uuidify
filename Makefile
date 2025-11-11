@@ -15,6 +15,7 @@ help:
 	@echo "  docker         - Build Docker image"
 	@echo "  lint           - Run static analysis"
 	@echo "  test           - Run all tests"
+	@echo "  test-health    - Run health endpoint checks (local + prod)"
 	@echo "  test-coverage  - Run tests with coverage report"
 	@echo "  clean          - Clean build artifacts"
 	@echo "  worker-dev     - Run Cloudflare Worker locally"
@@ -49,6 +50,12 @@ lint:
 
 test:
 	go test ./... -v
+
+test-health:
+	curl -fsS http://localhost:8080/health
+	curl -fsS "http://localhost:8080/health?format=json"
+	curl -fsS https://api.uuidify.io/health
+	curl -fsS "https://api.uuidify.io/health?format=json"
 
 test-coverage:
 	go test ./... -coverprofile=coverage.out

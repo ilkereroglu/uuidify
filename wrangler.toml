@@ -13,6 +13,8 @@ routes = [
 [vars]
 # Base API endpoint used by the Worker
 GO_API_URL = "https://api.uuidify.io"
+BUILD_VERSION = "dev"
+GIT_COMMIT = "local"
 
 # Cloudflare Analytics Engine binding
 [[analytics_engine_datasets]]

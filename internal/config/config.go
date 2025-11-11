@@ -12,6 +12,8 @@ type Config struct {
 	ReadTimeout  int
 	WriteTimeout int
 	IdleTimeout  int
+	BuildVersion string
+	GitCommit    string
 }
 
 // Load loads configuration from environment variables with defaults
@@ -22,6 +24,8 @@ func Load() *Config {
 		ReadTimeout:  getEnvAsInt("READ_TIMEOUT", 3),
 		WriteTimeout: getEnvAsInt("WRITE_TIMEOUT", 3),
 		IdleTimeout:  getEnvAsInt("IDLE_TIMEOUT", 60),
+		BuildVersion: getEnv("BUILD_VERSION", "dev"),
+		GitCommit:    getEnv("GIT_COMMIT", "local"),
 	}
 }
 
