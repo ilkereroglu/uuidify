@@ -22,10 +22,11 @@ export async function handleHealth(request, env = {}) {
 
   const payload = {
     status: "ok",
-    timestamp: new Date().toISOString(),
     service: "uuidify",
-    version: env.BUILD_VERSION || "dev",
-    commit: env.GIT_COMMIT || "local",
+    message: "UUIDify Worker running ✅",
+    timestamp: new Date().toISOString(),
+    version: env.BUILD_VERSION || "unknown",
+    commit: env.GIT_COMMIT || "unknown",
   };
 
   return new Response(JSON.stringify(payload), {
