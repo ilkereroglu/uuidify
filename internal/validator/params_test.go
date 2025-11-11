@@ -18,63 +18,80 @@ func TestParseUUIDParams(t *testing.T) {
 			name: "default parameters",
 			url:  "/",
 			expected: &UUIDParams{
-				Version: constants.DefaultVersion,
-				Count:   constants.DefaultCount,
-				Format:  constants.DefaultFormat,
+				Algorithm: constants.DefaultAlgorithm,
+				Version:   constants.DefaultVersion,
+				Count:     constants.DefaultCount,
+				Format:    constants.DefaultFormat,
 			},
 		},
 		{
 			name: "v1 version",
 			url:  "/?version=v1",
 			expected: &UUIDParams{
-				Version: "v1",
-				Count:   constants.DefaultCount,
-				Format:  constants.DefaultFormat,
+				Algorithm: constants.DefaultAlgorithm,
+				Version:   "v1",
+				Count:     constants.DefaultCount,
+				Format:    constants.DefaultFormat,
 			},
 		},
 		{
 			name: "v7 version",
 			url:  "/?version=v7",
 			expected: &UUIDParams{
-				Version: "v7",
-				Count:   constants.DefaultCount,
-				Format:  constants.DefaultFormat,
+				Algorithm: constants.DefaultAlgorithm,
+				Version:   "v7",
+				Count:     constants.DefaultCount,
+				Format:    constants.DefaultFormat,
 			},
 		},
 		{
 			name: "multiple parameters",
 			url:  "/?version=v1&count=5&format=text",
 			expected: &UUIDParams{
-				Version: "v1",
-				Count:   5,
-				Format:  "text",
+				Algorithm: constants.DefaultAlgorithm,
+				Version:   "v1",
+				Count:     5,
+				Format:    "text",
 			},
 		},
 		{
 			name: "invalid version defaults to v4",
 			url:  "/?version=v2",
 			expected: &UUIDParams{
-				Version: constants.DefaultVersion,
-				Count:   constants.DefaultCount,
-				Format:  constants.DefaultFormat,
+				Algorithm: constants.DefaultAlgorithm,
+				Version:   constants.DefaultVersion,
+				Count:     constants.DefaultCount,
+				Format:    constants.DefaultFormat,
 			},
 		},
 		{
 			name: "count clamped to max",
 			url:  "/?count=2000",
 			expected: &UUIDParams{
-				Version: constants.DefaultVersion,
-				Count:   constants.MaxUUIDCount,
-				Format:  constants.DefaultFormat,
+				Algorithm: constants.DefaultAlgorithm,
+				Version:   constants.DefaultVersion,
+				Count:     constants.MaxUUIDCount,
+				Format:    constants.DefaultFormat,
 			},
 		},
 		{
 			name: "zero count defaults to 1",
 			url:  "/?count=0",
 			expected: &UUIDParams{
-				Version: constants.DefaultVersion,
-				Count:   1,
-				Format:  constants.DefaultFormat,
+				Algorithm: constants.DefaultAlgorithm,
+				Version:   constants.DefaultVersion,
+				Count:     1,
+				Format:    constants.DefaultFormat,
+			},
+		},
+		{
+			name: "algorithm ulid",
+			url:  "/?algorithm=ulid",
+			expected: &UUIDParams{
+				Algorithm: constants.ValidAlgorithms.ULID,
+				Version:   constants.DefaultVersion,
+				Count:     constants.DefaultCount,
+				Format:    constants.DefaultFormat,
 			},
 		},
 	}
@@ -167,4 +184,3 @@ func TestValidateFormat(t *testing.T) {
 		})
 	}
 }
-

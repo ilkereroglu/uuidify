@@ -9,14 +9,23 @@ import (
 
 // UUIDParams holds validated UUID generation parameters
 type UUIDParams struct {
-	Version string
-	Count   int
-	Format  string
+	Algorithm string
+	Version   string
+	Count     int
+	Format    string
 }
 
 // ParseUUIDParams parses and validates UUID generation parameters from the request
 func ParseUUIDParams(r *http.Request) *UUIDParams {
 	q := r.URL.Query()
+
+	algorithm := q.Get("algorithm")
+	if algorithm == "" {
+		algorithm = constants.DefaultAlgorithm
+	} else {
+		algorithm = ValidateAlgorithm(algorithm)
+	}
+
 	version := q.Get("version")
 	if version == "" {
 		version = constants.DefaultVersion
@@ -34,10 +43,21 @@ func ParseUUIDParams(r *http.Request) *UUIDParams {
 	format = ValidateFormat(format)
 
 	return &UUIDParams{
-		Version: version,
-		Count:   count,
-		Format:  format,
+		Algorithm: algorithm,
+		Version:   version,
+		Count:     count,
+		Format:    format,
 	}
+}
+
+// ValidateAlgorithm validates and returns a valid UUID algorithm
+func ValidateAlgorithm(algorithm string) string {
+	for _, a := range constants.ValidAlgorithmsList {
+		if a == algorithm {
+			return algorithm
+		}
+	}
+	return constants.DefaultAlgorithm
 }
 
 // ValidateVersion validates and returns a valid UUID version

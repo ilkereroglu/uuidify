@@ -9,4 +9,6 @@ var (
 	ErrInvalidCount = fmt.Errorf("invalid count parameter")
 	// ErrGenerationFailed is returned when UUID generation fails
 	ErrGenerationFailed = fmt.Errorf("failed to generate UUID")
+	// ErrInvalidAlgorithm is returned when an invalid algorithm is requested
+	ErrInvalidAlgorithm = fmt.Errorf("invalid algorithm")
 )
