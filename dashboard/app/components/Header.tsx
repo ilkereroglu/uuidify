@@ -13,7 +13,7 @@ export default function Header() {
       <div className="container flex flex-wrap items-center justify-between gap-4 py-6">
         <Link href="/" className="flex items-center gap-2 text-white/90">
           <span className="text-lg font-semibold tracking-tight">
-            uuidify analytics
+            UUIDify Analytics
           </span>
         </Link>
         <nav className="flex flex-wrap items-center gap-3 text-sm">

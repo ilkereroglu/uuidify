@@ -76,11 +76,8 @@ const config: Config = {
       respectPrefersColorScheme: false,
     },
     navbar: {
-      title: 'UUIDify',
-      logo: {
-        alt: 'UUIDify logo',
-        src: 'img/logo.svg',
-      },
+      title: 'UUIDify Docs',
+      logo: undefined,
       items: [
         {
           type: 'docSidebar',
