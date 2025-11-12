@@ -33,10 +33,19 @@ export const onRequestGet = async ({ env }: { env: Env }) => {
       signal: controller.signal,
       headers: { "user-agent": "uuidify-status/edge" },
     });
+    const contentType = res.headers.get("content-type") || "";
+    const rawBody = await res.text();
     if (!res.ok) {
       throw new Error(`Failed to fetch ${path}: ${res.status}`);
     }
-    return (await res.json()) as T;
+    if (!contentType.includes("application/json")) {
+      throw new Error(`Unexpected response for ${path}`);
+    }
+    try {
+      return JSON.parse(rawBody) as T;
+    } catch {
+      throw new Error(`Invalid JSON payload for ${path}`);
+    }
   };
 
   try {

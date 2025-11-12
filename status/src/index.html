@@ -139,9 +139,33 @@
         opacity: 0.6;
         cursor: wait;
       }
+
+      .theme-toggle {
+        position: fixed;
+        top: 1.25rem;
+        right: 1.25rem;
+        width: 44px;
+        height: 44px;
+        border-radius: 999px;
+        border: 1px solid hsla(var(--border) / 0.4);
+        background: hsla(var(--secondary) / 0.4);
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        color: hsl(var(--foreground));
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(2, 6, 23, 0.45);
+      }
+
+      .theme-toggle svg {
+        width: 22px;
+        height: 22px;
+        pointer-events: none;
+      }
     </style>
   </head>
   <body>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
         <div>
@@ -150,7 +174,6 @@
           <p style="margin:0;color:hsl(var(--muted-foreground));">Automatic refresh every <span id="interval">30s</span></p>
         </div>
         <div class="controls">
-          <button id="theme-toggle" aria-pressed="true" title="Toggle color mode">Toggle Theme</button>
           <button id="refresh">Refresh</button>
         </div>
       </div>
@@ -203,8 +226,20 @@
         refreshBtn.textContent = manual ? 'Refreshing…' : 'Updating…';
         try {
           const res = await fetch('/api/status', { cache: 'no-store' });
-          if (!res.ok) throw new Error('Status API offline');
-          const data = await res.json();
+          const contentType = res.headers.get('content-type') || '';
+          const body = await res.text();
+          if (!res.ok) {
+            throw new Error(`Status API offline (${res.status})`);
+          }
+          if (!contentType.includes('application/json')) {
+            throw new Error('Unexpected response format');
+          }
+          let data;
+          try {
+            data = JSON.parse(body);
+          } catch {
+            throw new Error('Invalid JSON payload');
+          }
           const metrics = [
             { label: 'Status', value: data.status?.toUpperCase() ?? 'UNKNOWN' },
             { label: 'Uptime (30d)', value: `${data.uptime ?? 99.9}%` },
@@ -247,6 +282,7 @@
             <div class="metric" style="grid-column: 1 / -1; border-color: rgba(248, 113, 113, 0.5);">
               <h2>Unable to refresh</h2>
               <p>${error instanceof Error ? error.message : 'Unknown error'}</p>
+              <p>Status temporarily unavailable.</p>
             </div>
           `;
           updatedEl.textContent = 'Update failed — retry shortly';
@@ -269,10 +305,33 @@
         intervalLabel.textContent = `${intervalMs / 1000}s`;
       }
 
+      const getIcon = (mode) => {
+        if (mode === 'dark') {
+          return `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          `;
+        }
+        return `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
+          </svg>
+        `;
+      };
+
       const applyTheme = (mode) => {
         document.documentElement.dataset.theme = mode;
         localStorage.setItem(storageKey, mode);
-        themeBtn.textContent = mode === 'dark' ? 'Light Mode' : 'Dark Mode';
+        themeBtn.innerHTML = getIcon(mode === 'dark' ? 'light' : 'dark');
         themeBtn.setAttribute('aria-pressed', mode === 'dark' ? 'true' : 'false');
       };
 
