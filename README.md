@@ -8,14 +8,30 @@ Generate unique identifiers instantly — anywhere, anytime. ⚡
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Cloudflare](https://img.shields.io/badge/Deployed%20on-Cloudflare%20Workers-orange?logo=cloudflare)](https://api.uuidify.io/)
 [![Docker](https://img.shields.io/badge/Docker-ready-blue?logo=docker)](https://hub.docker.com/)
+[![Uptime](https://img.shields.io/badge/Uptime-99.9%25-success)](https://status.uuidify.io)
 
 ---
+
+### Live Endpoints
+
+- **API:** [api.uuidify.io](https://api.uuidify.io) — UUID/ULID generation
+- **Dashboard:** [dashboard.uuidify.io](https://dashboard.uuidify.io) — real-time telemetry
+- **Status:** [status.uuidify.io](https://status.uuidify.io) — uptime + health snapshots
 
 ## ⚡ Quick Start
 
 ```bash
+# Default UUID v4
 curl https://api.uuidify.io
 # → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
+
+# UUID v7 batch
+curl "https://api.uuidify.io?version=v7&count=3"
+# → {"uuids":["01234567-89ab-7def-0123-456789abcdef", ...]}
+
+# ULID generation (thanks @colbee1 / PR #3)
+curl "https://api.uuidify.io?version=ulid&count=2"
+# → {"ulids":["01HX7D9PMV4NQVP3J8B1R6R6FZ","01HX7D9PMV4NQVP3J8B1R6R6GA"]}
 ```
 
 ---
@@ -45,39 +61,24 @@ curl https://api.uuidify.io
 ## 🧠 Examples
 
 ```bash
-# Generate a single UUID (v4, default)
-curl https://api.uuidify.io
-# → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
-
-# Generate a UUID v1
+# Generate a UUID v1 frame
 curl "https://api.uuidify.io?version=v1"
-# → {"uuid":"6ba7b810-9dad-11d1-80b4-00c04fd430c8"}
 
-# Generate multiple UUIDs (v7)
-curl "https://api.uuidify.io?version=v7&count=5"
-# → {"uuids":["01234567-89ab-7def-0123-456789abcdef", ...]}
-
-# Generate UUIDs in text format
+# Request newline UUIDs
 curl "https://api.uuidify.io?format=text&count=3"
-# → 550e8400-e29b-41d4-a716-446655440000
-# → 6ba7b810-9dad-11d1-80b4-00c04fd430c8
-# → 01234567-89ab-7def-0123-456789abcdef
+
+# Stream ULIDs as text
+curl "https://api.uuidify.io?version=ulid&format=text&count=2"
+```
 
 ---
 
-# Generate a single ULID (version override)
-curl "https://api.uuidify.io?version=ulid"
-# → {"ulid":"01HX7D9PMV4NQVP3J8B1R6R6FZ"}
+## 📊 Monitoring & Observability
 
-# Generate multiple ULIDs
-curl "https://api.uuidify.io?version=ulid&count=3"
-# → {"ulids":["01HX7D9PMV4NQVP3J8B1R6R6FZ","01HX7D9PMV4NQVP3J8B1R6R6GA","01HX7D9PMV4NQVP3J8B1R6R6HB"]}
+- **Live Dashboard:** [dashboard.uuidify.io](https://dashboard.uuidify.io) shows health, latency (~40 ms observed), and throughput over time.
+- **Status Page:** [status.uuidify.io](https://status.uuidify.io) exposes cron-backed health pings, keeping publicly verifiable uptime (99.9% target).
 
-# Generate ULIDs in text format
-curl "https://api.uuidify.io?version=ulid&format=text&count=2"
-# → 01HX7D9PMV4NQVP3J8B1R6R6FZ
-# → 01HX7D9PMV4NQVP3J8B1R6R6GA
-```
+Both surfaces pull metrics from the Cloudflare Worker and Go backend, so you can validate deployments in real time.
 
 ---
 
@@ -162,10 +163,11 @@ Deployed via **Cloudflare Workers** with automatic builds from **GitHub → main
 
 ## 🧭 Roadmap
 
-- [x] Deploy via Cloudflare Workers (`api.uuidify.io`)
-- [ ] Add public uptime dashboard
-- [ ] Publish SDKs (Go, Node.js, Python)
-- [ ] Generate OpenAPI Spec + Postman Collection
+- ✅ Deploy via Cloudflare Workers (`api.uuidify.io`)
+- ✅ Add ULID support (PR #3 by [@colbee1](https://github.com/colbee1))
+- ✅ Stand up uptime + analytics dashboards (`dashboard.uuidify.io`, `status.uuidify.io`)
+- 🔜 Publish SDKs (Go, Node.js, Python)
+- 🔜 Generate OpenAPI Spec + Postman Collection
 
 ---
 
@@ -178,4 +180,4 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) and open an 
 
 ## 📝 License
 
-MIT © 2025 [İlker Eroğlu](https://github.com/ilkereroglu)
+MIT © 2025 [İlker Eroğlu](https://github.com/ilkereroglu) & contributors.
