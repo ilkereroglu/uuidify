@@ -65,16 +65,16 @@ curl "https://api.uuidify.io?format=text&count=3"
 
 ---
 
-# Generate a single ULID (default algorithm override)
-curl "https://api.uuidify.io?algorithm=ulid"
+# Generate a single ULID (version override)
+curl "https://api.uuidify.io?version=ulid"
 # → {"ulid":"01HX7D9PMV4NQVP3J8B1R6R6FZ"}
 
 # Generate multiple ULIDs
-curl "https://api.uuidify.io?algorithm=ulid&count=3"
+curl "https://api.uuidify.io?version=ulid&count=3"
 # → {"ulids":["01HX7D9PMV4NQVP3J8B1R6R6FZ","01HX7D9PMV4NQVP3J8B1R6R6GA","01HX7D9PMV4NQVP3J8B1R6R6HB"]}
 
 # Generate ULIDs in text format
-curl "https://api.uuidify.io?algorithm=ulid&format=text&count=2"
+curl "https://api.uuidify.io?version=ulid&format=text&count=2"
 # → 01HX7D9PMV4NQVP3J8B1R6R6FZ
 # → 01HX7D9PMV4NQVP3J8B1R6R6GA
 ```
@@ -93,7 +93,7 @@ curl http://localhost:8080/
 # → {"uuid":"550e8400-e29b-41d4-a716-446655440000"}
 
 # Test ULID generation
-curl "http://localhost:8080/?count=2&algorithm=ulid"
+curl "http://localhost:8080/?version=ulid&count=2"
 # → {"ulids":["01K9N48W4SVAN58GRTTVX2FF5J","01K9N48W4SVAN58GRTTX2CZ8N4"]}
 
 # Test worker locally
