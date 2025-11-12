@@ -14,18 +14,10 @@ GO_API_URL = "https://api.uuidify.io"
 BUILD_VERSION = "dev"
 GIT_COMMIT = "local"
 
-[[kv_namespaces]]
-binding = "UUIDIFY_CACHE"
-id = ""
-preview_id = ""
-
 [[r2_buckets]]
 binding = "LOG_BUCKET"
-bucket_name = ""
+bucket_name = "uuidify-logs-wnam"
 
 [[analytics_engine_datasets]]
 binding = "UUIDIFY_ANALYTICS"
-dataset = ""
-
-[triggers]
-crons = ["*/5 * * * *"]
+dataset = "uuidify_logs"

@@ -1,5 +1,5 @@
 name = "uuidify-status"
-#account_id = "6740062b250900222185a7f9305d6e86"
+account_id = "6740062b250900222185a7f9305d6e86"
 compatibility_date = "2025-11-12"
 pages_build_output_dir = "./out"
 
