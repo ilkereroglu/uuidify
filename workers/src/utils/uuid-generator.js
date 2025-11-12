@@ -1,7 +1,11 @@
 /**
  * UUID Generator Utilities
- * Supports UUID v1, v4, and v7 generation
+ * Supports UUID v1, v4, v7, and ULID generation
  */
+
+const ULID_ENCODING = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+const ULID_TIME_LENGTH = 10;
+const ULID_RANDOM_LENGTH = 16;
 
 /**
  * Generates a UUID v4 (random)
@@ -57,8 +61,40 @@ export function generateUUID(version = "v4") {
       return generateUUIDv1();
     case "v7":
       return generateUUIDv7();
+    case "ulid":
+      return generateULID();
     default:
       return generateUUIDv4();
   }
 }
 
+/**
+ * Generates a ULID string
+ * @returns {string} ULID string
+ */
+export function generateULID() {
+  const timestamp = encodeTime(BigInt(Date.now()), ULID_TIME_LENGTH);
+  const randomness = encodeRandom(ULID_RANDOM_LENGTH);
+  return timestamp + randomness;
+}
+
+function encodeTime(value, length) {
+  let time = value;
+  let output = "";
+  for (let i = 0; i < length; i++) {
+    const mod = Number(time % 32n);
+    output = ULID_ENCODING[mod] + output;
+    time = time / 32n;
+  }
+  return output;
+}
+
+function encodeRandom(length) {
+  const bytes = crypto.getRandomValues(new Uint8Array(length));
+  let output = "";
+  for (let i = 0; i < length; i++) {
+    const idx = bytes[i] & 31;
+    output += ULID_ENCODING[idx];
+  }
+  return output;
+}

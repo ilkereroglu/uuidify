@@ -26,8 +26,19 @@ curl https://api.uuidify.io
 |-------------|--------|---------|-------------|
 | `algorithm` | string | `uuid`  | Generator algorithm (`uuid` or `ulid`) |
 | `version`   | string | `v4`    | UUID version (`v1`, `v4`, or `v7`) |
-| `count`     | int    | `1`     | Number of UUIDs to generate (1–1000) |
+| `count`     | int    | `1`     | Number of identifiers to generate (1–1000) |
 | `format`    | string | `json`  | Response format: `json` or `text` |
+
+---
+
+## 📦 Response Format
+
+- `count = 1` and UUID algorithm ⇒ `{"uuid":"550e..."}`
+- `count > 1` and UUID algorithm ⇒ `{"uuids":["550e...","6ba7..."]}`
+- `count = 1` and ULID algorithm/version ⇒ `{"ulid":"01HX..."}`
+- `count > 1` and ULID algorithm/version ⇒ `{"ulids":["01HX...","01HX..."]}`
+
+> `format=text` still streams newline-delimited identifiers.
 
 ---
 
@@ -68,7 +79,7 @@ curl http://localhost:8080/
 
 # Test ULID generation
 curl "http://localhost:8080/?count=2&algorithm=ulid"
-# → {"uuids":["01K9N48W4SVAN58GRTTVX2FF5J","01K9N48W4SVAN58GRTTX2CZ8N4"]}
+# → {"ulids":["01K9N48W4SVAN58GRTTVX2FF5J","01K9N48W4SVAN58GRTTX2CZ8N4"]}
 
 # Test worker locally
 make worker-dev

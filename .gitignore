@@ -17,6 +17,9 @@ vendor/
 # Env
 .env
 
+# Wrangler local state
+.wrangler/
+
 # Node / Next.js
 node_modules/
 .next/

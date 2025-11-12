@@ -15,7 +15,8 @@ import { validateVersion } from '../utils/validator.js';
 export async function handleUUID(request, env) {
   const url = new URL(request.url);
   const version = validateVersion(url.searchParams.get("version"));
-  const uuid = generateUUID(version);
+  const identifier = generateUUID(version);
+  const responseKey = version === "ulid" ? "ulid" : "uuid";
 
   // Save to R2 if LOG_BUCKET is available
   if (env.LOG_BUCKET) {
@@ -23,7 +24,7 @@ export async function handleUUID(request, env) {
       await env.LOG_BUCKET.put(
         `uuid-${Date.now()}.json`,
         JSON.stringify({
-          uuid,
+          uuid: identifier,
           version,
           ip: request.headers.get("CF-Connecting-IP") || "unknown",
           timestamp: new Date().toISOString(),
@@ -39,8 +40,7 @@ export async function handleUUID(request, env) {
     }
   }
 
-  return new Response(JSON.stringify({ uuid }), {
+  return new Response(JSON.stringify({ [responseKey]: identifier }), {
     headers: { "Content-Type": "application/json" },
   });
 }
-

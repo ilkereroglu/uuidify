@@ -9,6 +9,7 @@ import (
 	"github.com/ilkereroglu/uuidify/internal/models"
 	"github.com/ilkereroglu/uuidify/internal/service"
 	"github.com/ilkereroglu/uuidify/internal/validator"
+	"github.com/ilkereroglu/uuidify/pkg/constants"
 )
 
 // UUIDHandler handles UUID generation requests
@@ -42,11 +43,11 @@ func (h *UUIDHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.sendResponse(w, uuids, params.Format)
+	h.sendResponse(w, uuids, params.Format, params.Algorithm)
 }
 
 // sendResponse sends the response in the requested format
-func (h *UUIDHandler) sendResponse(w http.ResponseWriter, uuids []string, format string) {
+func (h *UUIDHandler) sendResponse(w http.ResponseWriter, uuids []string, format string, algorithm string) {
 	if format == "text" {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		fmt.Fprint(w, strings.Join(uuids, "\n"))
@@ -54,11 +55,25 @@ func (h *UUIDHandler) sendResponse(w http.ResponseWriter, uuids []string, format
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	isULID := strings.EqualFold(algorithm, constants.ValidAlgorithms.ULID)
 	if len(uuids) == 1 {
+		if isULID {
+			response := models.ULIDResponse{ULID: uuids[0]}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
 		response := models.UUIDResponse{UUID: uuids[0]}
 		json.NewEncoder(w).Encode(response)
-	} else {
-		response := models.UUIDsResponse{UUIDs: uuids}
-		json.NewEncoder(w).Encode(response)
+		return
 	}
+
+	if isULID {
+		response := models.ULIDsResponse{ULIDs: uuids}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	response := models.UUIDsResponse{UUIDs: uuids}
+	json.NewEncoder(w).Encode(response)
 }

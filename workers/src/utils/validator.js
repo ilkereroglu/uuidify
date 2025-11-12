@@ -2,7 +2,7 @@
  * Validation Utilities
  */
 
-const VALID_VERSIONS = ["v1", "v4", "v7"];
+const VALID_VERSIONS = ["v1", "v4", "v7", "ulid"];
 const VALID_FORMATS = ["json", "text"];
 const MAX_COUNT = 1000;
 const DEFAULT_COUNT = 1;
@@ -29,8 +29,20 @@ export function validateVersion(version) {
  * @returns {number} Valid count
  */
 export function validateCount(count, maxCount = MAX_COUNT) {
-  const num = parseInt(count) || DEFAULT_COUNT;
-  return Math.max(1, Math.min(num, maxCount));
+  if (count === undefined || count === null || count === "") {
+    return DEFAULT_COUNT;
+  }
+
+  const num = Number(count);
+  if (!Number.isFinite(num) || !Number.isInteger(num)) {
+    throw new Error(`count must be an integer between 1 and ${maxCount}`);
+  }
+
+  if (num < 1 || num > maxCount) {
+    throw new Error(`count must be between 1 and ${maxCount}`);
+  }
+
+  return num;
 }
 
 /**
@@ -45,4 +57,3 @@ export function validateFormat(format) {
   const lowerFormat = format.toLowerCase();
   return VALID_FORMATS.includes(lowerFormat) ? lowerFormat : DEFAULT_FORMAT;
 }
-
