@@ -24,6 +24,8 @@ vendor/
 node_modules/
 .next/
 out/
+docs/out/
+status/out/
 dist/
 build/
 npm-debug.log*

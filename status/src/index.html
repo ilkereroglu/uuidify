@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UUIDify Status</title>
+    <link rel="icon" href="https://dashboard.uuidify.io/icon.svg" />
+    <link rel="stylesheet" href="tokens.css" />
+    <script>
+      (() => {
+        try {
+          const storageKey = 'uuidify-theme';
+          const stored = localStorage.getItem(storageKey);
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = stored || (prefersDark ? 'dark' : 'light');
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+        background: radial-gradient(circle at top, rgba(56, 189, 248, 0.15), transparent), hsl(var(--background));
+        color: hsl(var(--foreground));
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+      .card {
+        background: hsl(var(--card));
+        color: hsl(var(--card-foreground));
+        border-radius: 24px;
+        border: 1px solid hsla(var(--border) / 0.6);
+        padding: 2rem;
+        width: min(640px, 100%);
+        box-shadow: 0 20px 60px var(--shadow-glow, rgba(2, 6, 23, 0.8));
+      }
+      h1 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      .metric {
+        padding: 1.25rem;
+        background: rgba(15, 23, 42, 0.8);
+        border-radius: 18px;
+        border: 1px solid rgba(56, 189, 248, 0.2);
+      }
+      .metric h2 {
+        margin: 0;
+        font-size: 0.9rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-foreground));
+      }
+      .metric p {
+        margin: 0.4rem 0 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+      }
+      .history {
+        margin-top: 1.25rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid hsla(var(--border) / 0.5);
+      }
+
+      .history h3 {
+        margin: 0 0 0.5rem;
+        font-size: 0.95rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-foreground));
+      }
+
+      .history ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .history li {
+        background: hsla(var(--secondary) / 0.8);
+        color: hsl(var(--secondary-foreground));
+        border-radius: 999px;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.8rem;
+        border: 1px solid hsla(var(--border) / 0.3);
+      }
+
+      .footer {
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+        color: hsl(var(--muted-foreground));
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .controls {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      button {
+        background: hsl(var(--accent));
+        border: none;
+        color: hsl(var(--accent-foreground));
+        font-weight: 600;
+        padding: 0.75rem 1.4rem;
+        border-radius: 999px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      button:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 30px rgba(2, 6, 23, 0.4);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <div>
+          <p style="letter-spacing:0.5em;color:hsl(var(--muted-foreground));text-transform:uppercase;margin:0;">Live Status</p>
+          <h1>UUIDify Edge Health</h1>
+          <p style="margin:0;color:hsl(var(--muted-foreground));">Automatic refresh every <span id="interval">30s</span></p>
+        </div>
+        <div class="controls">
+          <button id="theme-toggle" aria-pressed="true" title="Toggle color mode">Toggle Theme</button>
+          <button id="refresh">Refresh</button>
+        </div>
+      </div>
+      <div class="grid" id="metrics"></div>
+      <div class="history">
+        <h3>Last health checks</h3>
+        <ul id="history-list"></ul>
+      </div>
+      <div class="footer">
+        <span id="updated">Updated just now</span>
+        <a href="https://dashboard.uuidify.io" style="color:hsl(var(--accent));text-decoration:none;">View full dashboard →</a>
+      </div>
+    </div>
+    <script>
+      const metricsEl = document.getElementById('metrics');
+      const updatedEl = document.getElementById('updated');
+      const refreshBtn = document.getElementById('refresh');
+      const historyList = document.getElementById('history-list');
+      const themeBtn = document.getElementById('theme-toggle');
+      const intervalLabel = document.getElementById('interval');
+      let intervalId;
+      const storageKey = 'uuidify-theme';
+      const intervalMs = 30000;
+      const logEndpoint = 'https://api.uuidify.io/log';
+
+      const reportError = (payload) => {
+        try {
+          const body = JSON.stringify({
+            source: 'status',
+            timestamp: new Date().toISOString(),
+            ...payload,
+          });
+          if (navigator.sendBeacon) {
+            navigator.sendBeacon(logEndpoint, body);
+          } else {
+            fetch(logEndpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body,
+              mode: 'cors',
+            });
+          }
+        } catch (err) {
+          console.error('status reporter failed', err);
+        }
+      };
+
+      async function fetchData(manual = false) {
+        refreshBtn.disabled = true;
+        refreshBtn.textContent = manual ? 'Refreshing…' : 'Updating…';
+        try {
+          const res = await fetch('/api/status', { cache: 'no-store' });
+          if (!res.ok) throw new Error('Status API offline');
+          const data = await res.json();
+          const metrics = [
+            { label: 'Status', value: data.status?.toUpperCase() ?? 'UNKNOWN' },
+            { label: 'Uptime (30d)', value: `${data.uptime ?? 99.9}%` },
+            { label: 'Latency (p95)', value: `${data.latencyMs ?? 0} ms` },
+            {
+              label: 'Requests / min',
+              value: Number(data.requestsPerMinute ?? 0).toLocaleString(),
+            },
+            {
+              label: 'Note',
+              value: data.statusMessage ?? 'Edge snapshot',
+            },
+          ];
+          metricsEl.innerHTML = metrics
+            .map(
+              (metric) => `
+                <div class="metric">
+                  <h2>${metric.label}</h2>
+                  <p>${metric.value}</p>
+                </div>
+              `,
+            )
+            .join('');
+          const updatedAt = data.checkedAt ? new Date(data.checkedAt) : new Date();
+          updatedEl.textContent = `Updated ${updatedAt.toLocaleTimeString()}`;
+
+          historyList.innerHTML =
+            data.history
+              ?.map((entry) => {
+                const stamp = entry.checkedAt ? new Date(entry.checkedAt) : null;
+                const status = entry.status ?? 'ok';
+                const label = stamp
+                  ? `${stamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${status}`
+                  : status.toUpperCase();
+                return `<li>${label}</li>`;
+              })
+              .join('') ?? '<li>No history yet</li>';
+        } catch (error) {
+          metricsEl.innerHTML = `
+            <div class="metric" style="grid-column: 1 / -1; border-color: rgba(248, 113, 113, 0.5);">
+              <h2>Unable to refresh</h2>
+              <p>${error instanceof Error ? error.message : 'Unknown error'}</p>
+            </div>
+          `;
+          updatedEl.textContent = 'Update failed — retry shortly';
+          historyList.innerHTML = '<li>History unavailable</li>';
+          reportError({
+            message: error instanceof Error ? error.message : String(error),
+            component: 'status-refresh',
+            route: window.location.pathname,
+          });
+        } finally {
+          refreshBtn.disabled = false;
+          refreshBtn.textContent = 'Refresh';
+        }
+      }
+
+      function schedule() {
+        clearInterval(intervalId);
+        fetchData();
+        intervalId = setInterval(fetchData, intervalMs);
+        intervalLabel.textContent = `${intervalMs / 1000}s`;
+      }
+
+      const applyTheme = (mode) => {
+        document.documentElement.dataset.theme = mode;
+        localStorage.setItem(storageKey, mode);
+        themeBtn.textContent = mode === 'dark' ? 'Light Mode' : 'Dark Mode';
+        themeBtn.setAttribute('aria-pressed', mode === 'dark' ? 'true' : 'false');
+      };
+
+      const initTheme = () => {
+        const stored = localStorage.getItem(storageKey);
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored || (prefersDark ? 'dark' : 'light');
+        applyTheme(theme);
+      };
+
+      refreshBtn.addEventListener('click', () => fetchData(true));
+      themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      });
+
+      window.addEventListener('error', (event) => {
+        reportError({
+          message: event.message,
+          stack: event.error?.stack,
+          component: 'status-window-error',
+          route: window.location.pathname,
+        });
+      });
+
+      window.addEventListener('unhandledrejection', (event) => {
+        reportError({
+          message: String(event.reason),
+          component: 'status-unhandled-rejection',
+          route: window.location.pathname,
+        });
+      });
+
+      initTheme();
+      schedule();
+    </script>
+  </body>
+</html>

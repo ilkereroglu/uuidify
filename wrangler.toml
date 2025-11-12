@@ -1,26 +1,31 @@
-# UUIDify Cloudflare Worker Configuration
 name = "uuidify"
+account_id = "6740062b250900222185a7f9305d6e86"
 main = "workers/main.js"
-compatibility_date = "2025-11-02"
+compatibility_date = "2025-11-12"
 workers_dev = false
 compatibility_flags = ["nodejs_compat"]
 
-# Route bindings for production
 routes = [
   { pattern = "api.uuidify.io/*", zone_name = "uuidify.io" }
 ]
 
 [vars]
-# Base API endpoint used by the Worker
 GO_API_URL = "https://api.uuidify.io"
 BUILD_VERSION = "dev"
 GIT_COMMIT = "local"
 
-# Cloudflare Analytics Engine binding
-[[analytics_engine_datasets]]
-binding = "UUIDIFY_ANALYTICS"
-dataset = "uuidify_logs"
+[[kv_namespaces]]
+binding = "UUIDIFY_CACHE"
+id = ""
+preview_id = ""
 
 [[r2_buckets]]
 binding = "LOG_BUCKET"
-bucket_name = "uuidify-logs-wnam"
+bucket_name = ""
+
+[[analytics_engine_datasets]]
+binding = "UUIDIFY_ANALYTICS"
+dataset = ""
+
+[triggers]
+crons = ["*/5 * * * *"]

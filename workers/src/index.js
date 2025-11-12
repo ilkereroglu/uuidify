@@ -15,8 +15,11 @@ import { handleHealth } from './handlers/health.js';
 import { handleLog } from './handlers/log.js';
 import { handleList } from './handlers/list.js';
 import { handleGenerate } from './handlers/generate.js';
+import { handleUptime } from './handlers/uptime.js';
 import { withAnalytics } from './middleware/analytics.js';
 import { withErrorHandler } from './middleware/error-handler.js';
+import { withCors } from './middleware/cors.js';
+import { logHealthSnapshot } from './utils/health-cron.js';
 
 // Route mapping
 const routes = {
@@ -25,6 +28,7 @@ const routes = {
   "/uuid": handleUUID,      // UUID with R2 logging
   "/log": handleLog,        // Manual log write
   "/list": handleList,      // List UUIDs from R2
+  "/uptime": handleUptime,  // Health history endpoint
 };
 
 /**
@@ -36,18 +40,22 @@ export default {
     const path = url.pathname;
     const handler = routes[path];
 
-    // Return 404 for unknown routes
     if (!handler) {
       return new Response("Not found", { status: 404 });
     }
 
-    // Wrap handler with error handling and analytics
-    const wrappedHandler = withAnalytics(
-      withErrorHandler(handler),
-      env
+    const wrappedHandler = withCors(
+      withAnalytics(withErrorHandler(handler), env),
     );
 
     return wrappedHandler(request, env, ctx);
   },
+  async scheduled(controller, env, ctx) {
+    const logPromise = logHealthSnapshot(env);
+    if (ctx?.waitUntil) {
+      ctx.waitUntil(logPromise);
+    } else {
+      await logPromise;
+    }
+  },
 };
-

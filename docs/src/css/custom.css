@@ -1,0 +1,38 @@
+@import "../../../theme/tokens.css";
+
+:root {
+  --ifm-color-primary: hsl(var(--accent));
+  --ifm-color-primary-dark: hsl(var(--accent));
+  --ifm-color-primary-darker: hsl(var(--primary));
+  --ifm-color-primary-darkest: hsl(var(--primary));
+  --ifm-color-primary-light: hsl(var(--accent));
+  --ifm-color-primary-lighter: hsl(var(--accent));
+  --ifm-color-primary-lightest: hsl(var(--accent));
+  --ifm-font-family-base: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --ifm-background-color: hsl(var(--background));
+  --ifm-hero-background-color: hsl(var(--card));
+  --ifm-font-color-base: hsl(var(--foreground));
+  --docusaurus-highlighted-code-line-bg: rgba(14, 165, 233, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: hsl(var(--accent));
+  --ifm-background-color: hsl(var(--background));
+  --ifm-font-color-base: hsl(var(--foreground));
+  --docusaurus-highlighted-code-line-bg: rgba(56, 189, 248, 0.25);
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.hero--primary {
+  background: radial-gradient(circle at top, rgba(14, 165, 233, 0.25), rgba(2, 8, 23, 0.9)),
+    linear-gradient(120deg, rgba(8, 47, 73, 0.8), rgba(15, 23, 42, 0.95));
+}
+
+.hero__title,
+.hero__subtitle {
+  color: hsl(var(--card-foreground));
+}
