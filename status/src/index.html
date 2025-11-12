@@ -140,16 +140,12 @@
         cursor: wait;
       }
 
-      .card {
-        position: relative;
-      }
-
       .theme-toggle {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        width: 44px;
-        height: 44px;
+        position: fixed;
+        top: 1.25rem;
+        right: 1.25rem;
+        width: 48px;
+        height: 48px;
         border-radius: 999px;
         border: 1px solid hsla(var(--border) / 0.4);
         background: hsla(var(--secondary) / 0.4);
@@ -169,6 +165,7 @@
     </style>
   </head>
   <body>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
     <div class="card">
       <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
@@ -230,19 +227,15 @@
         refreshBtn.textContent = manual ? 'Refreshing…' : 'Updating…';
         try {
           const res = await fetch('/api/status', { cache: 'no-store' });
-          const contentType = res.headers.get('content-type') || '';
           const body = await res.text();
-          if (!res.ok) {
-            throw new Error(`Status API offline (${res.status})`);
-          }
-          if (!contentType.includes('application/json')) {
-            throw new Error('Unexpected response format');
-          }
           let data;
           try {
             data = JSON.parse(body);
           } catch {
-            throw new Error('Invalid JSON payload');
+            throw new Error('Unexpected response format');
+          }
+          if (!res.ok) {
+            throw new Error(data?.statusMessage || `Status API offline (${res.status})`);
           }
           const metrics = [
             { label: 'Status', value: data.status?.toUpperCase() ?? 'UNKNOWN' },
