@@ -16,6 +16,7 @@ vendor/
 
 # Env
 .env
+.env.local
 
 # Wrangler local state
 .wrangler/
