@@ -62,6 +62,21 @@ curl "https://api.uuidify.io?format=text&count=3"
 # → 550e8400-e29b-41d4-a716-446655440000
 # → 6ba7b810-9dad-11d1-80b4-00c04fd430c8
 # → 01234567-89ab-7def-0123-456789abcdef
+
+---
+
+# Generate a single ULID (default algorithm override)
+curl "https://api.uuidify.io?algorithm=ulid"
+# → {"ulid":"01HX7D9PMV4NQVP3J8B1R6R6FZ"}
+
+# Generate multiple ULIDs
+curl "https://api.uuidify.io?algorithm=ulid&count=3"
+# → {"ulids":["01HX7D9PMV4NQVP3J8B1R6R6FZ","01HX7D9PMV4NQVP3J8B1R6R6GA","01HX7D9PMV4NQVP3J8B1R6R6HB"]}
+
+# Generate ULIDs in text format
+curl "https://api.uuidify.io?algorithm=ulid&format=text&count=2"
+# → 01HX7D9PMV4NQVP3J8B1R6R6FZ
+# → 01HX7D9PMV4NQVP3J8B1R6R6GA
 ```
 
 ---
