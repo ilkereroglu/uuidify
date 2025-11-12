@@ -32,8 +32,11 @@ const DEFAULT_INTERVAL = Number(
   process.env.NEXT_PUBLIC_DEFAULT_REFRESH_INTERVAL ?? 30_000,
 );
 
-const API_FALLBACK_BASE = (
+const API_REMOTE_BASE = (
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.uuidify.io"
+).replace(/\/$/, "");
+const API_LOCAL_BASE = (
+  process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL ?? "http://localhost:8787"
 ).replace(/\/$/, "");
 const getNow = () =>
   typeof performance === "undefined" ? Date.now() : performance.now();
@@ -55,9 +58,9 @@ export function DashboardContent() {
       (window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1")
     ) {
-      return `${API_FALLBACK_BASE}${path}`;
+      return `${API_LOCAL_BASE}${path}`;
     }
-    return `/api${path}`;
+    return `${API_REMOTE_BASE}${path}`;
   }, []);
 
   const ensureHealthShape = useCallback(
@@ -99,7 +102,7 @@ export function DashboardContent() {
       const started = getNow();
       const response = await fetch(target, { cache: "no-store" });
       if (!response.ok) {
-        throw new Error(`Unable to reach ${path}`);
+        throw new Error(`Unable to reach ${target} (${response.status})`);
       }
       const payload = await response.json();
       const duration = getNow() - started;
@@ -122,6 +125,7 @@ export function DashboardContent() {
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unable to reach API";
+      console.error("[dashboard] fetchSnapshot failed", error);
       setHealth((prev) => ({ ...prev, error: message }));
       setMetrics((prev) => ({ ...prev, error: message }));
     } finally {

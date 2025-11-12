@@ -71,9 +71,9 @@ const config: Config = {
   themeConfig: {
     image: 'img/logo.svg',
     colorMode: {
-      respectPrefersColorScheme: true,
       defaultMode: 'dark',
-      disableSwitch: false,
+      disableSwitch: true,
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: 'UUIDify',

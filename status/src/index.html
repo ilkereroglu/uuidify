@@ -1,24 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>UUIDify Status</title>
     <link rel="icon" href="https://dashboard.uuidify.io/icon.svg" />
     <link rel="stylesheet" href="tokens.css" />
-    <script>
-      (() => {
-        try {
-          const storageKey = 'uuidify-theme';
-          const stored = localStorage.getItem(storageKey);
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          const theme = stored || (prefersDark ? 'dark' : 'light');
-          document.documentElement.dataset.theme = theme;
-        } catch {
-          document.documentElement.dataset.theme = 'dark';
-        }
-      })();
-    </script>
     <style>
       body {
         margin: 0;
@@ -140,32 +127,9 @@
         cursor: wait;
       }
 
-      .theme-toggle {
-        position: fixed;
-        top: 1.25rem;
-        right: 1.25rem;
-        width: 48px;
-        height: 48px;
-        border-radius: 999px;
-        border: 1px solid hsla(var(--border) / 0.4);
-        background: hsla(var(--secondary) / 0.4);
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-        color: hsl(var(--foreground));
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 30px rgba(2, 6, 23, 0.2);
-      }
-
-      .theme-toggle svg {
-        width: 22px;
-        height: 22px;
-        pointer-events: none;
-      }
     </style>
   </head>
   <body>
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
     <div class="card">
       <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
@@ -193,12 +157,15 @@
       const updatedEl = document.getElementById('updated');
       const refreshBtn = document.getElementById('refresh');
       const historyList = document.getElementById('history-list');
-      const themeBtn = document.getElementById('theme-toggle');
       const intervalLabel = document.getElementById('interval');
       let intervalId;
-      const storageKey = 'uuidify-theme';
       const intervalMs = 30000;
       const logEndpoint = 'https://api.uuidify.io/log';
+
+      const API_BASE = () =>
+        window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+          ? 'http://localhost:8787'
+          : 'https://api.uuidify.io';
 
       const reportError = (payload) => {
         try {
@@ -222,32 +189,46 @@
         }
       };
 
+      const fetchJson = async (url, label) => {
+        const res = await fetch(url, { cache: 'no-store' });
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          console.error(`[status] ${label} parse error`, err, text);
+          throw new Error(`Unexpected response from ${label}`);
+        }
+        if (!res.ok) {
+          throw new Error(
+            data?.statusMessage || `${label} request failed (${res.status})`,
+          );
+        }
+        return data;
+      };
+
       async function fetchData(manual = false) {
         refreshBtn.disabled = true;
         refreshBtn.textContent = manual ? 'Refreshing…' : 'Updating…';
         try {
-          const res = await fetch('/api/status', { cache: 'no-store' });
-          const body = await res.text();
-          let data;
-          try {
-            data = JSON.parse(body);
-          } catch {
-            throw new Error('Unexpected response format');
-          }
-          if (!res.ok) {
-            throw new Error(data?.statusMessage || `Status API offline (${res.status})`);
-          }
+          const base = API_BASE();
+          const [healthData, metricsData, uptimeData] = await Promise.all([
+            fetchJson(`${base}/health?format=json`, 'health'),
+            fetchJson(`${base}/metrics`, 'metrics'),
+            fetchJson(`${base}/uptime?limit=12`, 'uptime'),
+          ]);
+
           const metrics = [
-            { label: 'Status', value: data.status?.toUpperCase() ?? 'UNKNOWN' },
-            { label: 'Uptime (30d)', value: `${data.uptime ?? 99.9}%` },
-            { label: 'Latency (p95)', value: `${data.latencyMs ?? 0} ms` },
+            { label: 'Status', value: healthData.healthy ? 'HEALTHY' : 'DEGRADED' },
+            { label: 'Uptime (30d)', value: `${metricsData.uptimePercent?.toFixed?.(2) ?? 99.9}%` },
+            { label: 'Latency (p95)', value: `${metricsData.responseTimeMs ?? healthData.responseTimeMs ?? 0} ms` },
             {
               label: 'Requests / min',
-              value: Number(data.requestsPerMinute ?? 0).toLocaleString(),
+              value: Number(metricsData.requestsPerMinute ?? 0).toLocaleString(),
             },
             {
               label: 'Note',
-              value: data.statusMessage ?? 'Edge snapshot',
+              value: healthData.statusMessage ?? 'Edge snapshot',
             },
           ];
           metricsEl.innerHTML = metrics
@@ -260,11 +241,11 @@
               `,
             )
             .join('');
-          const updatedAt = data.checkedAt ? new Date(data.checkedAt) : new Date();
+          const updatedAt = healthData.checkedAt ? new Date(healthData.checkedAt) : new Date();
           updatedEl.textContent = `Updated ${updatedAt.toLocaleTimeString()}`;
 
           historyList.innerHTML =
-            data.history
+            uptimeData.entries
               ?.map((entry) => {
                 const stamp = entry.checkedAt ? new Date(entry.checkedAt) : null;
                 const status = entry.status ?? 'ok';
@@ -279,6 +260,7 @@
             <div class="metric" style="grid-column: 1 / -1; border-color: rgba(248, 113, 113, 0.5);">
               <h2>Unable to refresh</h2>
               <p>${error instanceof Error ? error.message : 'Unknown error'}</p>
+              <p>Status temporarily unavailable.</p>
               <p>Status temporarily unavailable.</p>
             </div>
           `;
@@ -302,49 +284,7 @@
         intervalLabel.textContent = `${intervalMs / 1000}s`;
       }
 
-      const getIcon = (mode) => {
-        if (mode === 'dark') {
-          return `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="5"></circle>
-              <line x1="12" y1="1" x2="12" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="23"></line>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-              <line x1="1" y1="12" x2="3" y2="12"></line>
-              <line x1="21" y1="12" x2="23" y2="12"></line>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-          `;
-        }
-        return `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path>
-          </svg>
-        `;
-      };
-
-      const applyTheme = (mode) => {
-        document.documentElement.dataset.theme = mode;
-        localStorage.setItem(storageKey, mode);
-        themeBtn.innerHTML = getIcon(mode === 'dark' ? 'light' : 'dark');
-        themeBtn.setAttribute('aria-pressed', mode === 'dark' ? 'true' : 'false');
-      };
-
-      const initTheme = () => {
-        const stored = localStorage.getItem(storageKey);
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = stored || (prefersDark ? 'dark' : 'light');
-        applyTheme(theme);
-      };
-
       refreshBtn.addEventListener('click', () => fetchData(true));
-      themeBtn.addEventListener('click', () => {
-        const current = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-        applyTheme(current === 'dark' ? 'light' : 'dark');
-      });
-
       window.addEventListener('error', (event) => {
         reportError({
           message: event.message,
@@ -362,7 +302,6 @@
         });
       });
 
-      initTheme();
       schedule();
     </script>
   </body>

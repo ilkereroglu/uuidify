@@ -10,19 +10,6 @@ const inter = Inter({
 });
 
 const siteUrl = "https://dashboard.uuidify.io";
-const themeInitScript = `
-(() => {
-  try {
-    const storageKey = 'uuidify-theme';
-    const stored = localStorage.getItem(storageKey);
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = stored || (prefersDark ? 'dark' : 'light');
-    document.documentElement.dataset.theme = theme;
-  } catch {
-    document.documentElement.dataset.theme = 'dark';
-  }
-})();
-`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -67,7 +54,6 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="dark" className="bg-background">
       <body className={`${inter.variable} bg-background text-foreground`}>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <ErrorProbe />
         <div className="flex min-h-screen flex-col">{children}</div>
       </body>

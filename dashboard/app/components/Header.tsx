@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { ThemeToggle } from "./ThemeToggle";
 
 const navLinks = [
   { label: "API Docs", href: "https://docs.uuidify.io" },
@@ -38,7 +37,6 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
-          <ThemeToggle />
         </nav>
       </div>
     </header>
