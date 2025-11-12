@@ -16,6 +16,7 @@ import { handleLog } from './handlers/log.js';
 import { handleList } from './handlers/list.js';
 import { handleGenerate } from './handlers/generate.js';
 import { handleUptime } from './handlers/uptime.js';
+import { handleMetrics } from './handlers/metrics.js';
 import { withAnalytics } from './middleware/analytics.js';
 import { withErrorHandler } from './middleware/error-handler.js';
 import { withCors } from './middleware/cors.js';
@@ -29,6 +30,7 @@ const routes = {
   "/log": handleLog,        // Manual log write
   "/list": handleList,      // List UUIDs from R2
   "/uptime": handleUptime,  // Health history endpoint
+  "/metrics": handleMetrics, // Metrics snapshot endpoint
 };
 
 /**
