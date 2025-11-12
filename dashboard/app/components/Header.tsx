@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 
@@ -12,16 +11,8 @@ export default function Header() {
   return (
     <header className="border-b border-white/5 bg-black/30 shadow-xl shadow-black/40 backdrop-blur">
       <div className="container flex flex-wrap items-center justify-between gap-4 py-6">
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/logo.svg"
-            alt="UUIDify logo"
-            width={120}
-            height={40}
-            priority
-            className="h-10 w-auto"
-          />
-          <span className="text-lg font-semibold tracking-tight text-white/90">
+        <Link href="/" className="flex items-center gap-2 text-white/90">
+          <span className="text-lg font-semibold tracking-tight">
             uuidify analytics
           </span>
         </Link>

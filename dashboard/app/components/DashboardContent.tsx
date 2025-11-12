@@ -115,7 +115,7 @@ export function DashboardContent() {
     setIsRefreshing(true);
     try {
       const [healthRes, metricsRes] = await Promise.all([
-        fetchWithTiming("/health", ensureHealthShape),
+        fetchWithTiming("/health?format=json", ensureHealthShape),
         fetchWithTiming("/metrics", (payload) =>
           ensureMetricsShape(payload),
         ),
