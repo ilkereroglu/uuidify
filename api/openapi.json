@@ -1,0 +1,94 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "UUIDify API",
+    "description": "Blazing-fast public UUID/ULID generator API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "https://api.uuidify.io" }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Generate UUID or ULID",
+        "description": "Generates UUID (v1, v4, v7) or ULID depending on query parameters.",
+        "parameters": [
+          {
+            "name": "algorithm",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["uuid", "ulid"], "default": "uuid" }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["v1", "v4", "v7", "ulid"], "default": "v4" }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 1000, "default": 1 }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["json", "text"], "default": "json" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Generated identifier(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/UUIDSingle" },
+                    { "$ref": "#/components/schemas/UUIDBatch" },
+                    { "$ref": "#/components/schemas/ULIDSingle" },
+                    { "$ref": "#/components/schemas/ULIDBatch" }
+                  ]
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "550e8400-e29b-41d4-a716-446655440000\n"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UUIDSingle": {
+        "type": "object",
+        "properties": { "uuid": { "type": "string" } }
+      },
+      "UUIDBatch": {
+        "type": "object",
+        "properties": {
+          "uuids": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "ULIDSingle": {
+        "type": "object",
+        "properties": { "ulid": { "type": "string" } }
+      },
+      "ULIDBatch": {
+        "type": "object",
+        "properties": {
+          "ulids": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

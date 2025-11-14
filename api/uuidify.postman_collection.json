@@ -1,0 +1,50 @@
+{
+  "info": {
+    "name": "UUIDify API",
+    "_postman_id": "uuidify-collection-001",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "UUID v4",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "https://api.uuidify.io",
+          "protocol": "https",
+          "host": ["api", "uuidify", "io"]
+        }
+      }
+    },
+    {
+      "name": "UUID v7 batch",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "https://api.uuidify.io?version=v7&count=3",
+          "protocol": "https",
+          "host": ["api", "uuidify", "io"],
+          "query": [
+            { "key": "version", "value": "v7" },
+            { "key": "count", "value": "3" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "ULID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "https://api.uuidify.io?version=ulid&count=2",
+          "protocol": "https",
+          "host": ["api", "uuidify", "io"],
+          "query": [
+            { "key": "version", "value": "ulid" },
+            { "key": "count", "value": "2" }
+          ]
+        }
+      }
+    }
+  ]
+}
