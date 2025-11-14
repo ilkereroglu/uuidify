@@ -2,7 +2,9 @@ openapi: 3.0.3
 info:
   title: UUIDify API
   version: 1.0.0
-  description: Blazing-fast public UUID/ULID generation API (synced)
+  description: |
+    Blazing-fast public UUID/ULID generation API.
+    Built with Go & Cloudflare Workers — global, serverless, low-latency.
 
 servers:
   - url: https://api.uuidify.io
