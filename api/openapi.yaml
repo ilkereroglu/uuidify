@@ -79,10 +79,13 @@ paths:
                       uuid:
                         type: string
                         description: Single UUID
+                      generated_at:
+                        type: string
+                        format: date-time
+                        description: RFC3339 timestamp indicating when the ID was generated
                     example:
                       uuid: "550e8400-e29b-41d4-a716-446655440000"
-                      version:
-                        type: string
+                      generated_at: "2025-11-15T01:00:00Z"
 
                   # UUID — multiple
                   - type: object
@@ -91,18 +94,26 @@ paths:
                         type: array
                         items:
                           type: string
+                      generated_at:
+                        type: string
+                        format: date-time
                     example:
                       uuids:
                         - "550e8400-e29b-41d4-a716-446655440000"
                         - "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+                      generated_at: "2025-11-15T01:00:00Z"
 
                   # ULID — single
                   - type: object
                     properties:
                       ulid:
                         type: string
+                      generated_at:
+                        type: string
+                        format: date-time
                     example:
                       ulid: "01HX7D9PMV4NQVP3J8B1R6R6FZ"
+                      generated_at: "2025-11-15T01:00:00Z"
 
                   # ULID — multiple
                   - type: object
@@ -111,10 +122,14 @@ paths:
                         type: array
                         items:
                           type: string
+                      generated_at:
+                        type: string
+                        format: date-time
                     example:
                       ulids:
                         - "01HX7D9PMV4NQVP3J8B1R6R6FZ"
                         - "01HX7D9PMV4NQVP3J8B1R6R6GA"
+                      generated_at: "2025-11-15T01:00:00Z"
 
             text/plain:
               schema:
