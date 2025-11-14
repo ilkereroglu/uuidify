@@ -12,7 +12,7 @@ servers:
 
 tags:
   - name: Generate
-    description: Generate UUID or ULID identifiers
+    description: "Generate a new UUID sync"
 
 paths:
   "/":
