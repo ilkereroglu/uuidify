@@ -1,0 +1,29 @@
+name: Dispatch OpenAPI Sync
+
+on:
+  push:
+    paths:
+      - 'api/openapi.yaml'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send repository_dispatch event to uuidify-go
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.everest-preview+json" \
+            -H "Authorization: Bearer ${{ secrets.UUIDIFY_GO_SYNC_TOKEN }}" \
+            https://api.github.com/repos/ilkereroglu/uuidify-go/dispatches \
+            -d @- << 'EOF'
+          {
+            "event_type": "openapi_updated",
+            "client_payload": {
+              "source_repo": "uuidify",
+              "file": "api/openapi.yaml",
+              "commit": "${{ github.sha }}",
+              "ref": "${{ github.ref }}",
+              "url": "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/api/openapi.yaml"
+            }
+          }
+EOF
