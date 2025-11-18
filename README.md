@@ -36,6 +36,33 @@ curl "https://api.uuidify.io?version=ulid&count=2"
 
 ---
 
+## 📚 Client Libraries
+
+Bring UUIDify directly into your services without wiring HTTP calls manually.
+
+### Go — [`uuidify-go`](https://github.com/ilkereroglu/uuidify-go)
+
+- Install: `go get github.com/ilkereroglu/uuidify-go`
+- Usage:
+
+```go
+client, _ := uuidify.NewDefaultClient()
+id, _ := client.UUIDv4(context.Background())
+fmt.Println("UUID v4:", id)
+```
+
+The package ships with typed errors, overrideable HTTP clients, and runnable examples under [`examples/`](https://github.com/ilkereroglu/uuidify-go/tree/main/examples).
+
+### Python — coming soon
+
+Reserved for the official `uuidify-py` client. Expect idiomatic async+sync helpers and Pydantic-powered models once released.
+
+### Node.js — coming soon
+
+Reserved for the official `uuidify-js` client with both ESM and CJS builds plus TypeScript types.
+
+---
+
 ## 🔧 Parameters
 
 | Param       | Type   | Default | Description |
