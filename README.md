@@ -169,7 +169,7 @@ Deployed via **Cloudflare Workers** with automatic builds from **GitHub → main
 - 🔜 Publish SDKs (Go, Node.js, Python)
 - 🔜 Generate OpenAPI Spec + Postman Collection
 
-### SDK Rollout
+### 📦 SDK Rollout
 
 | Language | Repository | Status |
 |----------|------------|--------|
