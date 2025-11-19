@@ -174,7 +174,7 @@ Deployed via **Cloudflare Workers** with automatic builds from **GitHub → main
 | Language | Repository | Status |
 |----------|------------|--------|
 | Go       | [`uuidify-go`](https://github.com/ilkereroglu/uuidify-go) | ✅ Released |
-| Python   | `uuidify-py` (TBD) | 🔜 In development |
+| Python   | [`uuidify-python`](https://github.com/ilkereroglu/uuidify-python) | ✅ Released |
 | Node.js  | `uuidify-js` (TBD) | 🔜 In development |
 
 ---
