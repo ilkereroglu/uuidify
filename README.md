@@ -8,15 +8,15 @@
 </p>
 
 <p align="center">
-  <img src="./docs/assets/uuidify-banner.png" alt="UUIDify Banner" width="100%"/>
-</p>
-
-<p align="center">
   <a href="https://go.dev/"><img src="https://img.shields.io/badge/Go-1.22-blue?logo=go" alt="Go"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <a href="https://api.uuidify.io/"><img src="https://img.shields.io/badge/Deployed%20on-Cloudflare%20Workers-orange?logo=cloudflare" alt="Cloudflare"></a>
   <a href="https://hub.docker.com/"><img src="https://img.shields.io/badge/Docker-ready-blue?logo=docker" alt="Docker"></a>
   <a href="https://status.uuidify.io"><img src="https://img.shields.io/badge/Uptime-99.9%25-success" alt="Uptime"></a>
+</p>
+
+<p align="center">
+  <img src="./docs/assets/uuidify-banner.png" alt="UUIDify Banner" width="100%"/>
 </p>
 
 ---
