@@ -7,11 +7,17 @@
   Ultra-fast UUID & ULID generation API — powered by Go and deployed globally on Cloudflare Workers.
 </p>
 
-[![Go](https://img.shields.io/badge/Go-1.22-blue?logo=go)](https://go.dev/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Cloudflare](https://img.shields.io/badge/Deployed%20on-Cloudflare%20Workers-orange?logo=cloudflare)](https://api.uuidify.io/)
-[![Docker](https://img.shields.io/badge/Docker-ready-blue?logo=docker)](https://hub.docker.com/)
-[![Uptime](https://img.shields.io/badge/Uptime-99.9%25-success)](https://status.uuidify.io)
+<p align="center">
+  <img src="./docs/assets/uuidify-banner.png" alt="UUIDify Banner" width="100%"/>
+</p>
+
+<p align="center">
+  <a href="https://go.dev/"><img src="https://img.shields.io/badge/Go-1.22-blue?logo=go" alt="Go"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://api.uuidify.io/"><img src="https://img.shields.io/badge/Deployed%20on-Cloudflare%20Workers-orange?logo=cloudflare" alt="Cloudflare"></a>
+  <a href="https://hub.docker.com/"><img src="https://img.shields.io/badge/Docker-ready-blue?logo=docker" alt="Docker"></a>
+  <a href="https://status.uuidify.io"><img src="https://img.shields.io/badge/Uptime-99.9%25-success" alt="Uptime"></a>
+</p>
 
 ---
 
