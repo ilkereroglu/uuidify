@@ -1,8 +1,11 @@
-# 🌀 uuidify
+<h1 align="center">
+  <img src="./docs/assets/uuidify-icon.png" width="64" valign="middle" alt="UUIDify logo" style="vertical-align:middle; margin-right:10px;" />
+  UUIDify
+</h1>
 
-A blazing-fast public **UUID/ULID Generator API** built with **Go** — deployed globally via **Cloudflare Workers**.
-
-Generate unique identifiers instantly — anywhere, anytime. ⚡
+<p align="center">
+  Ultra-fast UUID & ULID generation API — powered by Go and deployed globally on Cloudflare Workers.
+</p>
 
 [![Go](https://img.shields.io/badge/Go-1.22-blue?logo=go)](https://go.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
@@ -14,11 +17,12 @@ Generate unique identifiers instantly — anywhere, anytime. ⚡
 
 ### Live Endpoints
 
+- **Website:** [uuidify.io](https://uuidify.io) — Project Home ([Source](https://github.com/ilkereroglu/uuidify-web))
 - **API:** [api.uuidify.io](https://api.uuidify.io) — UUID/ULID generation
 - **Dashboard:** [dashboard.uuidify.io](https://dashboard.uuidify.io) — real-time telemetry
 - **Status:** [status.uuidify.io](https://status.uuidify.io) — uptime + health snapshots
 
-## ⚡ Quick Start
+## Quick Start
 
 ```bash
 # Default UUID v4
@@ -36,7 +40,7 @@ curl "https://api.uuidify.io?version=ulid&count=2"
 
 ---
 
-## 🔧 Parameters
+## Parameters
 
 | Param       | Type   | Default | Description |
 |-------------|--------|---------|-------------|
@@ -47,7 +51,7 @@ curl "https://api.uuidify.io?version=ulid&count=2"
 
 ---
 
-## 📦 Response Format
+## Response Format
 
 - `count = 1` and UUID algorithm ⇒ `{"uuid":"550e..."}`
 - `count > 1` and UUID algorithm ⇒ `{"uuids":["550e...","6ba7..."]}`
@@ -58,7 +62,7 @@ curl "https://api.uuidify.io?version=ulid&count=2"
 
 ---
 
-## 🧠 Examples
+## Examples
 
 ```bash
 # Generate a UUID v1 frame
@@ -73,7 +77,7 @@ curl "https://api.uuidify.io?version=ulid&format=text&count=2"
 
 ---
 
-## 📊 Monitoring & Observability
+## Monitoring & Observability
 
 - **Live Dashboard:** [dashboard.uuidify.io](https://dashboard.uuidify.io) shows health, latency (~40 ms observed), and throughput over time.
 - **Status Page:** [status.uuidify.io](https://status.uuidify.io) exposes cron-backed health pings, keeping publicly verifiable uptime (99.9% target).
@@ -82,7 +86,7 @@ Both surfaces pull metrics from the Cloudflare Worker and Go backend, so you can
 
 ---
 
-## 🧩 Local Development
+## Local Development
 
 ```bash
 # Run Go backend
@@ -115,7 +119,7 @@ For detailed testing and deployment guide, see [TESTING.md](./TESTING.md).
 
 ---
 
-## 🐳 Docker
+## Docker
 
 ```bash
 docker build -t uuidify:latest .
@@ -124,7 +128,7 @@ docker run -p 8080:8080 uuidify:latest
 
 ---
 
-## ⚙️ Makefile Commands
+## Makefile Commands
 
 | Command | Description |
 |---------|-------------|
@@ -136,7 +140,7 @@ docker run -p 8080:8080 uuidify:latest
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 ### Cloudflare Workers Deploy
 
@@ -161,7 +165,7 @@ Deployed via **Cloudflare Workers** with automatic builds from **GitHub → main
 
 ---
 
-## 🧭 Roadmap
+## Roadmap
 
 - ✅ Deploy via Cloudflare Workers (`api.uuidify.io`)
 - ✅ Add ULID support (PR #3 by [@colbee1](https://github.com/colbee1))
@@ -169,7 +173,7 @@ Deployed via **Cloudflare Workers** with automatic builds from **GitHub → main
 - 🔜 Publish SDKs (Go, Node.js, Python)
 - 🔜 Generate OpenAPI Spec + Postman Collection
 
-### 📦 SDK Rollout
+### SDK Rollout
 
 | Language | Repository | Status |
 |----------|------------|--------|
@@ -179,13 +183,13 @@ Deployed via **Cloudflare Workers** with automatic builds from **GitHub → main
 
 ---
 
-## 🧰 Contributing
+## Contributing
 
 We welcome PRs! ❤️  
 Follow [Conventional Commits](https://www.conventionalcommits.org/) and open an issue first for new features.
 
 ---
 
-## 📝 License
+## License
 
 MIT © 2025 [İlker Eroğlu](https://github.com/ilkereroglu) & contributors.
